@@ -1,0 +1,61 @@
+management:
+  health:
+    circuitbreakers:
+      enabled: true
+  endpoints:
+    web:
+      exposure:
+        include: health
+  endpoint:
+    health:
+      show-details: always
+
+resilience4j:
+  retry:
+    instances:
+      requestLoanService:
+        max-attempts: 3
+        waitDuration: 3s
+
+eureka:
+  client:
+    serviceUrl:
+      defaultZone: http://${EUREKA_SERVER_HOST_IP:localhost}:8012/eureka/
+
+server:
+  port: ${SERVER_PORT:8013}
+spring:
+  application:
+    name: LoanRequestService
+  jpa:
+    database-platform: org.hibernate.dialect.PostgreSQLDialect
+    hibernate:
+      ddl-auto: update
+  datasource:
+    password: ${DB_PASSWORD:root}
+    username: ${DB_USERNAME:postgres}
+    url: jdbc:postgresql://${DB_HOST:localhost}:${DB_PORT:5432}/${DB_NAME:request_loan}
+
+app:
+  check_loan_balance_service_url_request_loan: ${REQUEST_LOAN_SERVICE_URL:http://localhost:8012/requestLoan}
+
+logging:
+  pattern:
+    dateformat: 'yyyy-MM-dd HH:mm:ss.SSS XXX'
+  level:
+    root: INFO
+    com:
+      example.requestloan: DEBUG
+  file:
+    name: ${LOG_PATH:/requestloan/logs/}${LOGFILE:today.log}
+  logback:
+    rollingpolicy:
+      file-name-pattern: ${LOG_PATH:/requestloan/logs/}%d{ddMMyyyy}.%i.log
+      max-history: 60
+      max-file-size: 800MB
+
+
+
+
+
+
